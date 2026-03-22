@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Google Drive</title> <!-- Stealth Tab -->
+    <title>Google Drive</title> <!-- Stealth Tab Name -->
     <link rel="icon" type="image/x-icon" href="https://ssl.gstatic.com">
     
-    <!-- UPDATED PATHS: Looking inside 'active/uv/' based on your folder structure -->
+    <!-- ULTRAVIOLET ENGINE SCRIPTS (Linked to your /active/uv/ folder) -->
     <script src="/active/uv/uv.bundle.js"></script>
     <script src="/active/uv/uv.config.js"></script>
 
@@ -36,17 +36,22 @@
     <canvas id="bg-canvas"></canvas>
 
     <div class="glass-panel">
-        <div class="logo-wrap"><div class="logo-c"></div><div class="logo-dot"></div></div>
+        <div class="logo-wrap">
+            <div class="logo-c"></div>
+            <div class="logo-dot"></div>
+        </div>
         <div class="brand">BLACKCOSMOS</div>
-        <div class="status">UV_TUNNEL_v10.0</div>
+        <div class="status">UV_TUNNEL_v10.5</div>
         
-        <input type="text" id="urlInput" placeholder="ENTER COORDINATES (e.g. google.com)">
+        <input type="text" id="urlInput" placeholder="DESTINATION_HOST (e.g. google.com)">
+        
         <button id="launch">ENGAGE VOID</button>
+        
         <p class="panic-info">EXEC_PANIC [ <b> \ </b> ] REDIRECT_CLASSROOM</p>
     </div>
 
     <script>
-        // 1. REGISTER THE SERVICE WORKER (FROM 'active/uv/' FOLDER)
+        // 1. REGISTER THE SERVICE WORKER
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
                 navigator.serviceWorker.register("/active/uv/sw.js", {
@@ -59,7 +64,7 @@
             });
         }
 
-        // 2. STARFIELD
+        // 2. STARFIELD ANIMATION
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
@@ -76,29 +81,38 @@
         // 3. PANIC REDIRECT
         document.addEventListener('keydown', (e) => { if (e.key === "\\") window.location.href = "https://classroom.google.com"; });
 
-        // 4. VOID ENGINE
+        // 4. VOID ENGINE (With URL Sanitizer)
         document.getElementById('launch').onclick = function() {
-            const input = document.getElementById('urlInput').value.trim();
+            let input = document.getElementById('urlInput').value.trim();
             if (!input) return alert("System requires target.");
+
+            // AUTO-FORMAT URL: This fixes the 'Invalid URL' error
+            if (!/^https?:\/\//i.test(input)) {
+                input = 'https://' + input;
+            }
 
             if (typeof __uv$config === 'undefined') {
                 return alert("Syncing with Nebula... wait 5 seconds and try again.");
             }
 
-            const url = __uv$config.prefix + __uv$config.encodeUrl(input);
-            const win = window.open('about:blank', '_blank');
-            const doc = win.document;
-            const iframe = doc.createElement('iframe');
-            
-            iframe.src = window.location.origin + url;
-            iframe.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;";
-            
-            const panicScript = doc.createElement('script');
-            panicScript.textContent = "document.addEventListener('keydown',e=>{if(e.key==='\\\\')window.location.href='https://classroom.google.com'});";
+            try {
+                const url = __uv$config.prefix + __uv$config.encodeUrl(input);
+                const win = window.open('about:blank', '_blank');
+                const doc = win.document;
+                const iframe = doc.createElement('iframe');
+                
+                iframe.src = window.location.origin + url;
+                iframe.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;";
+                
+                const panicScript = doc.createElement('script');
+                panicScript.textContent = "document.addEventListener('keydown',e=>{if(e.key==='\\\\')window.location.href='https://classroom.google.com'});";
 
-            doc.body.style.margin = "0";
-            doc.body.appendChild(iframe);
-            doc.body.appendChild(panicScript);
+                doc.body.style.margin = "0";
+                doc.body.appendChild(iframe);
+                doc.body.appendChild(panicScript);
+            } catch (e) {
+                alert("BlackCosmos Tunnel Error: " + e.message);
+            }
         };
     </script>
 </body>
