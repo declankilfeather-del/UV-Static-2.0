@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Google Drive</title> <!-- Stealth Tab Name -->
+    <title>Google Drive</title> <!-- Tab Camouflage -->
     <link rel="icon" type="image/x-icon" href="https://ssl.gstatic.com">
     
-    <!-- Ultraviolet Scripts (Crucial for the Engine) -->
-    <script src="uv/uv.bundle.js"></script>
-    <script src="uv/uv.config.js"></script>
+    <!-- FIXED PATHS: Added leading slashes to find the UV engine -->
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
 
     <link href="https://fonts.googleapis.com" rel="stylesheet">
 
@@ -36,49 +36,70 @@
     <canvas id="bg-canvas"></canvas>
 
     <div class="glass-panel">
-        <div class="logo-wrap"><div class="logo-c"></div><div class="logo-dot"></div></div>
+        <div class="logo-wrap">
+            <div class="logo-c"></div>
+            <div class="logo-dot"></div>
+        </div>
         <div class="brand">BLACKCOSMOS</div>
-        <div class="status">UV_TUNNEL_v9.2</div>
-        <input type="text" id="urlInput" placeholder="DESTINATION_HOST (e.g. msn.com)">
+        <div class="status">UV_TUNNEL_v9.8</div>
+        
+        <input type="text" id="urlInput" placeholder="DESTINATION_HOST (e.g. google.com)">
+        
         <button id="launch">ENGAGE VOID</button>
+        
         <p class="panic-info">EXEC_PANIC [ <b> \ </b> ] REDIRECT_CLASSROOM</p>
     </div>
 
     <script>
-        // Starfield Logic
+        // 1. REGISTER THE SERVICE WORKER (FIXED PATH)
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/uv/sw.js", {
+                    scope: __uv$config.prefix,
+                }).then(() => {
+                    console.log("BlackCosmos Tunnel: ONLINE");
+                }).catch((err) => {
+                    console.error("Tunnel Failure:", err);
+                });
+            });
+        }
+
+        // 2. REACTIVE STARFIELD
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
         const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
         window.onresize = resize; resize();
         class Star {
-            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 1.5; this.baseX = this.x; this.baseY = this.y; }
-            update() { /* Static for now */ }
-            draw() { ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 1.5; }
+            draw() { ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
         }
-        for(let i=0; i<300; i++) stars.push(new Star());
-        const animate = () => { ctx.clearRect(0,0,canvas.width, canvas.height); stars.forEach(s => s.draw()); requestAnimationFrame(animate); };
+        for (let i = 0; i < 300; i++) stars.push(new Star());
+        const animate = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); stars.forEach(s => s.draw()); requestAnimationFrame(animate); };
         animate();
 
-        // --- ULTRAVIOLET ENGAGE LOGIC ---
+        // 3. PANIC REDIRECT
         document.addEventListener('keydown', (e) => { if (e.key === "\\") window.location.href = "https://classroom.google.com"; });
 
+        // 4. TUNNEL LAUNCHER
         document.getElementById('launch').onclick = function() {
             const input = document.getElementById('urlInput').value.trim();
-            if (!input) return;
+            if (!input) return alert("Target Coordinates Empty.");
 
-            // Encodes the URL so GoGuardian can't read it
-            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(input);
-            const targetUrl = window.location.origin + encodedUrl;
+            // Safety check for the UV engine
+            if (typeof __uv$config === 'undefined') {
+                return alert("Engine Offline: Check if the /uv folder exists in your GitHub repo.");
+            }
 
+            // Encode and Launch into about:blank
+            const url = __uv$config.prefix + __uv$config.encodeUrl(input);
             const win = window.open('about:blank', '_blank');
             const doc = win.document;
             const iframe = doc.createElement('iframe');
             
-            iframe.src = targetUrl;
+            iframe.src = window.location.origin + url;
             iframe.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;";
             
-            // Panic key script for the NEW tab
             const panicScript = doc.createElement('script');
             panicScript.textContent = "document.addEventListener('keydown',e=>{if(e.key==='\\\\')window.location.href='https://classroom.google.com'});";
 
