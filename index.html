@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Google Drive</title> <!-- Tab Camouflage -->
+    <title>Google Drive</title> <!-- Stealth Tab -->
     <link rel="icon" type="image/x-icon" href="https://ssl.gstatic.com">
     
-    <!-- FIXED PATHS: Added leading slashes to find the UV engine -->
-    <script src="/uv/uv.bundle.js"></script>
-    <script src="/uv/uv.config.js"></script>
+    <!-- UPDATED PATHS: Looking inside 'active/uv/' based on your folder structure -->
+    <script src="/active/uv/uv.bundle.js"></script>
+    <script src="/active/uv/uv.config.js"></script>
 
     <link href="https://fonts.googleapis.com" rel="stylesheet">
 
@@ -36,35 +36,30 @@
     <canvas id="bg-canvas"></canvas>
 
     <div class="glass-panel">
-        <div class="logo-wrap">
-            <div class="logo-c"></div>
-            <div class="logo-dot"></div>
-        </div>
+        <div class="logo-wrap"><div class="logo-c"></div><div class="logo-dot"></div></div>
         <div class="brand">BLACKCOSMOS</div>
-        <div class="status">UV_TUNNEL_v9.8</div>
+        <div class="status">UV_TUNNEL_v10.0</div>
         
-        <input type="text" id="urlInput" placeholder="DESTINATION_HOST (e.g. google.com)">
-        
+        <input type="text" id="urlInput" placeholder="ENTER COORDINATES (e.g. google.com)">
         <button id="launch">ENGAGE VOID</button>
-        
         <p class="panic-info">EXEC_PANIC [ <b> \ </b> ] REDIRECT_CLASSROOM</p>
     </div>
 
     <script>
-        // 1. REGISTER THE SERVICE WORKER (FIXED PATH)
+        // 1. REGISTER THE SERVICE WORKER (FROM 'active/uv/' FOLDER)
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/uv/sw.js", {
+                navigator.serviceWorker.register("/active/uv/sw.js", {
                     scope: __uv$config.prefix,
                 }).then(() => {
-                    console.log("BlackCosmos Tunnel: ONLINE");
+                    console.log("BlackCosmos: TUNNEL_READY");
                 }).catch((err) => {
-                    console.error("Tunnel Failure:", err);
+                    console.error("Tunnel Failed:", err);
                 });
             });
         }
 
-        // 2. REACTIVE STARFIELD
+        // 2. STARFIELD
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
@@ -81,17 +76,15 @@
         // 3. PANIC REDIRECT
         document.addEventListener('keydown', (e) => { if (e.key === "\\") window.location.href = "https://classroom.google.com"; });
 
-        // 4. TUNNEL LAUNCHER
+        // 4. VOID ENGINE
         document.getElementById('launch').onclick = function() {
             const input = document.getElementById('urlInput').value.trim();
-            if (!input) return alert("Target Coordinates Empty.");
+            if (!input) return alert("System requires target.");
 
-            // Safety check for the UV engine
             if (typeof __uv$config === 'undefined') {
-                return alert("Engine Offline: Check if the /uv folder exists in your GitHub repo.");
+                return alert("Syncing with Nebula... wait 5 seconds and try again.");
             }
 
-            // Encode and Launch into about:blank
             const url = __uv$config.prefix + __uv$config.encodeUrl(input);
             const win = window.open('about:blank', '_blank');
             const doc = win.document;
