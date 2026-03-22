@@ -1,13 +1,14 @@
 /* 
    BLACKCOSMOS ENGINE CORE 
-   Location: /active/uv.sw.js
+   Location: /active/sw.js
 */
 
-// These paths must match your folder structure exactly
+// These now point correctly to the sub-folder
 importScripts('/active/uv/uv.bundle.js');
 importScripts('/active/uv/uv.config.js');
-importScripts('/active/uv/uv.sw.js'); // This loads the internal engine from the subfolder
+importScripts('/active/uv/uv.sw.js'); 
 
+// The 'UVServiceWorker' class is inside the bundle we just imported
 const sw = new UVServiceWorker();
 
 self.addEventListener('fetch', (event) => {
