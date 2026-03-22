@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Google Drive</title> <!-- Stealth Tab -->
+    <title>Google Drive</title> <!-- Stealth Tab Name -->
     <link rel="icon" type="image/x-icon" href="https://ssl.gstatic.com">
     
     <!-- Engine Scripts -->
@@ -46,24 +46,26 @@
     </div>
 
     <script>
-        // 1. REGISTER TUNNEL
+        // 1. UPDATED SERVICE WORKER REGISTRATION (v11.0 Fix)
         async function registerTunnel() {
             if ("serviceWorker" in navigator) {
                 try {
-                    await navigator.serviceWorker.register("/active/uv/sw.js", {
+                    // This matches your new /active/uv.sw.js path
+                    await navigator.serviceWorker.register("/active/uv.sw.js", {
                         scope: __uv$config.prefix,
                     });
                     document.getElementById('statusLabel').innerText = "TUNNEL_READY";
                     document.getElementById('statusLabel').style.color = "#00ff88";
+                    console.log("BlackCosmos: Tunnel Sync Complete.");
                 } catch (err) {
                     document.getElementById('statusLabel').innerText = "TUNNEL_ERROR";
-                    console.error(err);
+                    console.error("Tunnel Registration Failed:", err);
                 }
             }
         }
         window.addEventListener("load", registerTunnel);
 
-        // 2. STARFIELD
+        // 2. STARFIELD ANIMATION
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
