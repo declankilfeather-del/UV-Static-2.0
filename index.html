@@ -51,9 +51,9 @@
             if ("serviceWorker" in navigator) {
                 try {
                     // This matches your new /active/uv.sw.js path
-                    await navigator.serviceWorker.register("/active/uv.sw.js", {
-                        scope: __uv$config.prefix,
-                    });
+                await navigator.serviceWorker.register("/active/sw.js", {
+    scope: __uv$config.prefix,
+});
                     document.getElementById('statusLabel').innerText = "TUNNEL_READY";
                     document.getElementById('statusLabel').style.color = "#00ff88";
                     console.log("BlackCosmos: Tunnel Sync Complete.");
