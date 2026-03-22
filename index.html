@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Google Drive</title> <!-- Stealth Tab Name -->
+    <title>Google Drive</title> <!-- Tab Camouflage -->
     <link rel="icon" type="image/x-icon" href="https://ssl.gstatic.com">
     
-    <!-- ULTRAVIOLET ENGINE SCRIPTS (Linked to your /active/uv/ folder) -->
+    <!-- FORCED PATHS: Leading slashes to find the 'active' folder at the root -->
     <script src="/active/uv/uv.bundle.js"></script>
     <script src="/active/uv/uv.config.js"></script>
 
@@ -36,33 +36,35 @@
     <canvas id="bg-canvas"></canvas>
 
     <div class="glass-panel">
-        <div class="logo-wrap">
-            <div class="logo-c"></div>
-            <div class="logo-dot"></div>
-        </div>
+        <div class="logo-wrap"><div class="logo-c"></div><div class="logo-dot"></div></div>
         <div class="brand">BLACKCOSMOS</div>
-        <div class="status">UV_TUNNEL_v10.5</div>
+        <div id="statusLabel" class="status">TUNNEL_OFFLINE</div>
         
-        <input type="text" id="urlInput" placeholder="DESTINATION_HOST (e.g. google.com)">
-        
+        <input type="text" id="urlInput" placeholder="ENTER COORDINATES (e.g. google.com)">
         <button id="launch">ENGAGE VOID</button>
-        
         <p class="panic-info">EXEC_PANIC [ <b> \ </b> ] REDIRECT_CLASSROOM</p>
     </div>
 
     <script>
-        // 1. REGISTER THE SERVICE WORKER
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/active/uv/sw.js", {
-                    scope: __uv$config.prefix,
-                }).then(() => {
-                    console.log("BlackCosmos: TUNNEL_READY");
-                }).catch((err) => {
-                    console.error("Tunnel Failed:", err);
-                });
-            });
+        // 1. FORCED SERVICE WORKER REGISTRATION (#3 FIX)
+        async function registerSW() {
+            if ("serviceWorker" in navigator) {
+                try {
+                    // Try the specific folder path you confirmed
+                    await navigator.serviceWorker.register("/active/uv/sw.js", {
+                        scope: __uv$config.prefix,
+                    });
+                    document.getElementById('statusLabel').innerText = "TUNNEL_READY";
+                    document.getElementById('statusLabel').style.color = "#00ff88";
+                    console.log("BlackCosmos: Tunnel Established");
+                } catch (err) {
+                    document.getElementById('statusLabel').innerText = "TUNNEL_ERROR";
+                    document.getElementById('statusLabel').style.color = "#ff003c";
+                    console.error("Tunnel Registration Failed:", err);
+                }
+            }
         }
+        window.addEventListener("load", registerSW);
 
         // 2. STARFIELD ANIMATION
         const canvas = document.getElementById('bg-canvas');
@@ -81,27 +83,30 @@
         // 3. PANIC REDIRECT
         document.addEventListener('keydown', (e) => { if (e.key === "\\") window.location.href = "https://classroom.google.com"; });
 
-        // 4. VOID ENGINE (With URL Sanitizer)
+        // 4. VOID ENGINE (Fixed for about:blank and URLs)
         document.getElementById('launch').onclick = function() {
             let input = document.getElementById('urlInput').value.trim();
-            if (!input) return alert("System requires target.");
+            if (!input) return alert("Coordinates Missing.");
 
-            // AUTO-FORMAT URL: This fixes the 'Invalid URL' error
+            // Format URL automatically
             if (!/^https?:\/\//i.test(input)) {
                 input = 'https://' + input;
             }
 
             if (typeof __uv$config === 'undefined') {
-                return alert("Syncing with Nebula... wait 5 seconds and try again.");
+                return alert("Syncing with Nebula... Please refresh (Ctrl+F5) and wait 5 seconds.");
             }
 
             try {
                 const url = __uv$config.prefix + __uv$config.encodeUrl(input);
+                const targetUrl = window.location.origin + url;
+
+                // Launch Blank Tab
                 const win = window.open('about:blank', '_blank');
                 const doc = win.document;
-                const iframe = doc.createElement('iframe');
                 
-                iframe.src = window.location.origin + url;
+                const iframe = doc.createElement('iframe');
+                iframe.src = targetUrl;
                 iframe.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;";
                 
                 const panicScript = doc.createElement('script');
